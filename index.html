@@ -10,7 +10,6 @@
             background: linear-gradient(45deg, #6a11cb, #2575fc);
             color: #fff;
             text-align: center;
-            
         }
 
         .container {
@@ -84,6 +83,11 @@
             display: none;
         }
 
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -135,6 +139,7 @@
         <div id="searchContainer">
             <input type="text" id="searchInput" placeholder="ابحث عن اسم الطالب..." onkeyup="searchTable()">
             <span id="searchIcon" onclick="searchTable()">🔍</span>
+            <div id="error-message" class="error-message hidden"></div>
         </div>
 
         <table id="resultTable">
@@ -150,22 +155,25 @@
                 <!-- سيتم إضافة البيانات هنا -->
             </tbody>
         </table>
-        <button id="editButton" onclick="editTable()row.grade = prompt('تقدير الحفظ:', row.grade);">تعديل الصف الحالي</button>
+        <button id="editButton" onclick="editTable()">تعديل الصف الحالي</button>
         <button id="addButton" onclick="addRow()">إضافة صف جديد</button>
         <button id="deleteButton" onclick="deleteRow()">حذف الصف</button>
         <button id="backButton" onclick="goBack()">رجوع</button>
     </div>
-<script>
-  if (location.protocol !== 'https:') {
-    location.replace(`https://${location.hostname}${location.pathname}${location.search}`);
-  }
-</script>
+    
+    <script>
+        // التحقق من البروتوكول HTTPS
+        if (location.protocol !== 'https:') {
+            location.replace(`https://${location.hostname}${location.pathname}${location.search}`);
+        }
+    </script>
     <script>
         // البحث في الجدول بناءً على اسم الطالب
         function searchTable() {
             const searchInput = document.getElementById('searchInput').value.toLowerCase();
             const table = document.getElementById('resultTable');
             const tr = table.getElementsByTagName('tr');
+            let found = false; // متغير لتتبع ما إذا تم العثور على الطالب
 
             for (let i = 1; i < tr.length; i++) {
                 const td = tr[i].getElementsByTagName('td')[0]; // العمود الأول "اسم الطالب"
@@ -173,10 +181,21 @@
                     const txtValue = td.textContent || td.innerText;
                     if (txtValue.toLowerCase().indexOf(searchInput) > -1) {
                         tr[i].style.display = '';
+                        found = true; // تم العثور على الطالب
+                        tr[i].scrollIntoView({ behavior: 'smooth' }); // توجيه المستخدم إلى الصف
                     } else {
                         tr[i].style.display = 'none';
                     }
                 }
+            }
+
+            // إظهار رسالة خطأ إذا لم يتم العثور على الطالب
+            const errorMessage = document.getElementById('error-message');
+            if (!found) {
+                errorMessage.textContent = 'لم يُحفظ أي طالب بهذا الاسم.';
+                errorMessage.classList.remove('hidden');
+            } else {
+                errorMessage.classList.add('hidden'); // إخفاء الرسالة إذا تم العثور على الطالب
             }
         }
 
@@ -189,7 +208,7 @@
             return tableData ? JSON.parse(tableData) : [];
         }
 
-        function updateTable() {
+        function updateTablefunction updateTable() {
             const tableBody = document.getElementById('tableBody');
             const data = loadData();
             tableBody.innerHTML = '';
@@ -206,7 +225,6 @@
             const name = document.getElementById('parentName').value;
 
             if (username && password && name) {
-                // يمكن إضافة تحقق من صحة بيانات ولي الأمر هنا إذا كان هناك قاعدة بيانات
                 document.getElementById('parentLogin').classList.add('hidden');
                 document.getElementById('teacherLogin').classList.add('hidden');
                 document.getElementById('tablePage').classList.remove('hidden');
@@ -243,7 +261,7 @@
                 row.student = prompt('اسم الطالب:', row.student);
                 row.sura = prompt('اسم السورة:', row.sura);
                 row.ayat = prompt('عدد الآيات:', row.ayat);
-                
+                row.grade = prompt('تقدير الحفظ:', row.grade); // إضافة هذا السطر
                 saveData(data);
                 updateTable();
             } else {
@@ -294,16 +312,4 @@
         document.addEventListener('DOMContentLoaded', updateTable);
     </script>
 </body>
-</html>yId('backButton').style.display = 'none';
-        }
-
-        // تحميل البيانات عند بدء الصفحة
-        document.addEventListener('DOMContentLoaded', updateTable);
-    </script>
-</body>
-</html>>
-</html>er('DOMContentLoaded', updateTable);
-    </script>
-</body>
-</html>>
 </html>
